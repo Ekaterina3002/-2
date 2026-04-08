@@ -6,14 +6,14 @@ No-Code веб-интерфейс для обучения нейросетей
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from data.dataset import DataLoader, ArrayDataset
+from data.dataset import DataLoader
 from data.utils import load_mnist, load_iris, load_california_housing
-from data.transforms import Compose, Normalize, Flatten
 from core.layers import Sequential, Linear
 from core.activations import ReLU, Sigmoid, Tanh, Softmax
 from core.losses import MSELoss, CrossEntropyLoss
@@ -95,21 +95,34 @@ with col1:
 
         # Показываем примеры
         X_sample, y_sample = dataset[:5]
-        st.dataframe(np.hstack([X_sample, y_sample.reshape(-1, 1)]),
-                     columns=[f"Feature {i}" for i in range(4)] + ["Class"])
+        iris_preview = pd.DataFrame(
+            np.hstack([X_sample, y_sample.reshape(-1, 1)]),
+            columns=[f"Feature {i}" for i in range(4)] + ["Class"]
+        )
+        st.dataframe(iris_preview)
 
     elif dataset_name == "MNIST (Classification)":
         dataset, _ = load_mnist()
-        input_size = 784
+        sample_x, _ = dataset[0]
+        input_size = int(sample_x.shape[0])
         output_size = 10
         task = "classification"
-        st.write(f"**MNIST Dataset**: {len(dataset)} samples, 28x28 images, 10 digits")
+        image_side = int(np.sqrt(input_size))
+        image_shape = (
+            f"{image_side}x{image_side}"
+            if image_side * image_side == input_size
+            else f"flattened {input_size} features"
+        )
+        st.write(f"**MNIST-like Dataset**: {len(dataset)} samples, {image_shape}, 10 digits")
 
         # Показываем примеры изображений
         fig, axes = plt.subplots(1, 5, figsize=(10, 2))
         for i in range(5):
             X, y = dataset[i]
-            axes[i].imshow(X.reshape(28, 28), cmap='gray')
+            if image_side * image_side == input_size:
+                axes[i].imshow(X.reshape(image_side, image_side), cmap='gray')
+            else:
+                axes[i].imshow(X.reshape(1, -1), cmap='gray', aspect='auto')
             axes[i].set_title(f"Digit: {y}")
             axes[i].axis('off')
         st.pyplot(fig)
@@ -154,7 +167,7 @@ with col2:
     # Показываем архитектуру
     st.text(str(model))
 
-    total_params = sum(p.size for p in model.parameters())
+    total_params = sum(p.data.size for p in model.parameters())
     st.info(f"**Total parameters**: {total_params:,}")
 
 # Обучение
@@ -314,5 +327,5 @@ st.sidebar.info(
     "- Custom autograd engine\n"
     "- NumPy for computations\n"
     "- Streamlit for UI\n\n"
-    "Made by: Катя & Мадина"
+    "Made by: Катя & Мадина & Саша!"
 )
