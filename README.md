@@ -10,6 +10,7 @@
 | ---------- | ---------------------------------------------------------------------------------------------- |
 | **Катя**   | Ядро фреймворка: autograd, слои, функции потерь, оптимизаторы                                  |
 | **Мадина** | Работа с данными (Dataset, DataLoader), примеры (MNIST, Iris), документация, no-code интерфейс |
+| **Саша**   | Веб-демо и инфраструктура: Streamlit-приложение, интеграция обучения, контейнеризация (Docker/Compose) |
 
 ---
 
@@ -81,7 +82,8 @@
 ```bash
 git clone https://github.com/madina-zhu/neural-framework.git
 cd neural-framework
-pip install -r requirements.txt
+cd neural-framework
+poetry install
 ```
 
 ---
@@ -139,12 +141,30 @@ python examples/iris_demo.py
 ## 🌐 Web-интерфейс
 
 ```bash
-cd web_demo
-streamlit run app.py
+cd neural-framework
+poetry run streamlit run web_demo/app.py
 ```
 
 Открыть в браузере:
 http://localhost:8501
+
+---
+
+## 🐳 Docker Compose
+
+```bash
+cd neural-framework
+docker compose up --build
+```
+
+Открыть в браузере:
+http://localhost:8501
+
+Для остановки:
+
+```bash
+docker compose down
+```
 
 ---
 

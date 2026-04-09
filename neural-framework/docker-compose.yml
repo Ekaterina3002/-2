@@ -1,0 +1,18 @@
+services:
+  web_demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web
+    container_name: neural-framework-web-demo
+    ports:
+      - "8501:8501"
+    environment:
+      PORT: "8501"
+      DATA_DIR: "/opt/app/web_demo/data"
+    volumes:
+      - datasets:/opt/app/web_demo/data
+    restart: unless-stopped
+
+volumes:
+  datasets:

@@ -58,6 +58,10 @@ class Momentum:
                 p.data += self.velocities[i]
 
 
+# Backward-compatible alias used in demo app imports.
+MomentumSGD = Momentum
+
+
 class Adam:
     """Adam оптимизатор."""
     
